@@ -15,5 +15,7 @@ void Row::deserialize_row(void *source)
 }
 void Row::print()
 {
-    std::cout << this->id << "\t" << this->username << "\t\t" << this->email << "\n";
+    // std::cout << this->id << "\t" << this->username << "\t\t" << this->email << "\n";
+    std::cout <<"("<< this->id << ", " << this->username << ", " << this->email << ")\n";
+
 }

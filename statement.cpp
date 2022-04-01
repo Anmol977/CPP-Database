@@ -5,11 +5,24 @@ PrepareResult Statement::prepare_statement(InputBuffer &input_buffer)
     if (strncmp(input_buffer.buffer, "insert", 6) == 0)
     {
         this->type = STATEMENT_INSERT;
-        int args_assigned = sscanf(input_buffer.buffer, "insert %d %s %s", &(this->row_to_insert.id), this->row_to_insert.username, this->row_to_insert.email);
-        if (args_assigned < 3)
-        {
+        char* keyword = strtok(input_buffer.buffer," ");
+        char* id_str = strtok(NULL, " ");
+        char* username = strtok(NULL, " ");
+        char* email = strtok(NULL, " ");
+        if(id_str == NULL || username == NULL || email == NULL){
+            std::cout<<"smth is null \n";
             return PREPARE_SYNTAX_ERROR;
         }
+        int id = atoi(id_str);
+        if(id < 0 ){
+            return PREPARE_NEGATIVE_ID;
+        }
+        if(strlen(username) > COLUMN_USERNAME_SIZE || strlen(email) > COLUMN_EMAIL_SIZE){
+            return PREPARE_STRING_TOO_LONG;
+        }
+        this->row_to_insert.id = id;
+        strcpy(this->row_to_insert.username,username);
+        strcpy(this->row_to_insert.email,email);
         return PREPARE_SUCCESS;
     }
     else if (strncmp(input_buffer.buffer, "select", 6) == 0)
@@ -22,7 +35,7 @@ PrepareResult Statement::prepare_statement(InputBuffer &input_buffer)
 
 ExecuteResult Statement::execute_insert(Table &table)
 {
-    std::cout<<"current rows in table : "<<table.num_rows<<"\n";
+    // std::cout<<"current rows in table : "<<table.num_rows<<"\n";
     if (table.num_rows >= TABLE_MAX_ROWS)
     {
         return EXECUTE_TABLE_FULL;
@@ -37,7 +50,7 @@ ExecuteResult Statement::execute_insert(Table &table)
 ExecuteResult Statement::execute_select(Table &table)
 {
     Row row;
-    std::cout<<"id \tusername \temail\n";
+    // std::cout<<"id \tusername \temail\n";
     for (uint32_t i = 0; i < table.num_rows; i++)
     {
         row.deserialize_row(table.row_slot(i));

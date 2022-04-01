@@ -18,7 +18,7 @@ public:
     void *pages[TABLE_MAX_PAGES];
     Table()
     {
-        std::cout<<"table constructor called \n";
+        // std::cout<<"table constructor called \n";
         this->num_rows = 0;
         for (uint32_t i = 0; i < TABLE_MAX_PAGES; i++)
         {
@@ -35,7 +35,7 @@ public:
         void *page = this->pages[page_num];
         if (page == nullptr)
         {
-            std::cout<<"allocating page... \n";
+            // std::cout<<"allocating page... \n";
             page = this->pages[page_num] = malloc(PAGE_SIZE);
         }
         uint32_t row_offset = row_num % ROWS_PER_PAGE;

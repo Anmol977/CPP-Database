@@ -24,7 +24,8 @@ MetaCommandResult do_meta_command(InputBuffer input_buffer)
 
 void print_prompt()
 {
-    std::cout << RED << "db > " << RESET;
+    // std::cout << RED << "db > " << RESET;
+    std::cout<<"db > ";
 }
 
 int main()
@@ -53,8 +54,15 @@ int main()
         {
         case (PREPARE_SUCCESS):
             break;
+        case (PREPARE_STRING_TOO_LONG):
+            std::cout<< "String is too long.\n";
+            continue;
+        case (PREPARE_NEGATIVE_ID):
+            std::cout<< "ID must be positive.\n";
+            continue;
         case (PREPARE_SYNTAX_ERROR):
             std::cout << "Syntax error. Could not parse statement. \n";
+            continue;
         case (PREPARE_UNRECOGNIZED_STATEMENT):
             std::cout << "urecognized keyword at start of '" << input_buffer.buffer << "'. \n";
             continue;
@@ -62,10 +70,10 @@ int main()
         switch (statement.execute_statement(table))
         {
         case (EXECUTE_SUCCESS):
-            std::cout << "command executed.\n";
+            std::cout << "Executed.\n";
             break;
             case(EXECUTE_TABLE_FULL):
-                std::cout<<"Error: Table full. \n";
+                std::cout<<"Error: Table full.\n";
                 break;
         }
     }
