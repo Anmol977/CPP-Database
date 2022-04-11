@@ -3,9 +3,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
-
-#define COLUMN_EMAIL_SIZE 255
-#define COLUMN_USERNAME_SIZE 32
+#include "values.h"
 
 class Row
 {

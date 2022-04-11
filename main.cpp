@@ -10,10 +10,11 @@
 #define RED "\033[31m"
 #define RESET "\033[0m"
 
-MetaCommandResult do_meta_command(InputBuffer input_buffer)
+MetaCommandResult do_meta_command(InputBuffer input_buffer, Table &table)
 {
-    if (strcmp(input_buffer.buffer,".exit") == 0)
+    if (strcmp(input_buffer.buffer, ".exit") == 0)
     {
+        table.db_close();
         exit(EXIT_SUCCESS);
     }
     else
@@ -25,20 +26,27 @@ MetaCommandResult do_meta_command(InputBuffer input_buffer)
 void print_prompt()
 {
     // std::cout << RED << "db > " << RESET;
-    std::cout<<"db > ";
+    std::cout << "db > ";
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+    if (argc < 2)
+    {
+        print_prompt();
+        std::cout << "Must provide a database filename. \n";
+        exit(EXIT_FAILURE);
+    }
+    char *filename = argv[1];
     InputBuffer input_buffer;
-    Table table;
+    Table table(filename);
     while (true)
     {
         print_prompt();
         input_buffer.read_input();
         if (input_buffer.buffer[0] == '.')
         {
-            switch (do_meta_command(input_buffer))
+            switch (do_meta_command(input_buffer, table))
             {
             case (META_COMMAND_SUCCESS):
                 continue;
@@ -55,10 +63,10 @@ int main()
         case (PREPARE_SUCCESS):
             break;
         case (PREPARE_STRING_TOO_LONG):
-            std::cout<< "String is too long.\n";
+            std::cout << "String is too long.\n";
             continue;
         case (PREPARE_NEGATIVE_ID):
-            std::cout<< "ID must be positive.\n";
+            std::cout << "ID must be positive.\n";
             continue;
         case (PREPARE_SYNTAX_ERROR):
             std::cout << "Syntax error. Could not parse statement. \n";
@@ -72,9 +80,9 @@ int main()
         case (EXECUTE_SUCCESS):
             std::cout << "Executed.\n";
             break;
-            case(EXECUTE_TABLE_FULL):
-                std::cout<<"Error: Table full.\n";
-                break;
+        case (EXECUTE_TABLE_FULL):
+            std::cout << "Error: Table full.\n";
+            break;
         }
     }
 }
